@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Buku;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,5 +58,14 @@ class ProfileController extends Controller
         $request->session()->regenerateToken();
 
         return Redirect::to('/');
+    }
+
+    public function index(){
+        $batas = 5;
+        $data_buku = Buku::paginate($batas);
+        $no = $batas * ($data_buku->currentPage() - 1);
+        $total_harga = DB::table('buku')->sum('harga');
+        $jumlah_buku = $data_buku->count();
+        return view('dashboard', compact('data_buku', 'total_harga', 'no', 'jumlah_buku'));
     }
 }
